@@ -9,11 +9,20 @@ window = display.set_mode((win_width, win_height))#создай окно игр�
 clock = time.Clock()
 FPS = 60
 font.init()
-font = font.SysFont('Arial', 40)
-win = font.render('ТЫ ВЫИГРАЛ !' , True , (0, 255, 0))
-lose = font.render('ТЫ ПРОИГРАЛ!' , True , (255, 0, 0))
+font1 = font.Font(None, 75)
+win1 = font1.render('PLAYER 1 WIN!' , True , (0, 255, 0))
+lose1 = font1.render('PLAYER 1 LOSE!' , True , (255, 0, 0))
+
+font2 = font.Font(None, 75)
+win2 = font2.render('PLAYER 2 WIN!' , True , (0, 255, 0))
+lose2 = font2.render('PLAYER 2 LOSE!' , True , (255, 0, 0))
+
 
 speed = 15
+
+speed_x = 3
+
+speed_y = 3
 
 background = transform.scale(image.load('ФОНДЛЯПИНПОНГА.jpg'), (700, 500))
 
@@ -60,7 +69,7 @@ class Enemy(GameSprite):
         if self.direction == 'right':
             self.rect.x += self.speed
             
-ball = Enemy('penis_ball.png', 350,250,50, 50, 10)
+ball = GameSprite('penis_ball.png', 350,250,50, 50, 10)
 
 racketka1 = Player('racket.png', 20, 50, 30, 100, 15) 
 
@@ -74,15 +83,10 @@ for enemy in enemy_list:
 
 
 
-
-
-
-
 finish = False
 game = True
 
-while game :
-
+while game:
 
     window.blit(background,(0, 0))
 
@@ -90,16 +94,34 @@ while game :
             if e.type == QUIT:
                 game = False
 
+    if finish != True:
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+    
+    if ball.rect.y > win_height-50 or ball.rect.y < 0:
+        speed_y *= -1
+
+    if sprite.collide_rect(racketka1, ball) or sprite.collide_rect(racketka2, ball):
+        speed_x *= -1
+
+    if ball.rect.x < 0:
+        finish = True
+        window.blit(lose1, (150, 200))
+
+
+    if ball.rect.x > 670:
+        finish = True
+        window.blit(lose2, (150, 200))
+
 
     racketka1.reset()
     racketka1.move()
-    
     racketka2.reset()
     racketka2.move2()
 
     ball.reset()    
-            
+                
 
-    
+        
     display.update()
     clock.tick(FPS)
